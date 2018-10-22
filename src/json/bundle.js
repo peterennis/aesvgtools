@@ -1,5 +1,5 @@
 /**
- * This file is part of the simple-svg-tools package.
+ * This file is part of the @json/tools package.
  *
  * (c) Vjacheslav Trushkin <cyberalien@gmail.com>
  *
@@ -13,7 +13,7 @@ const fs = require('fs');
 const path = require('path');
 const getPrefix = require('./prefix');
 const optimize = require('./optimize');
-const Collection = require('./collection');
+const Collection = require('./json');
 
 /**
  * Default options
@@ -21,7 +21,7 @@ const Collection = require('./collection');
  * @type {object}
  */
 const defaults = {
-    // Use default SimpleSVG collections
+    // Use default Iconify.design collections
     defaultCollections: true,
 
     // Array of custom collections. key = prefix, value = location of json file
@@ -60,7 +60,7 @@ function locateFile(prefix, options) {
 
     if (options.defaultCollections) {
         if (defaultIcons === null) {
-            defaultIcons = require('simple-svg-icons');
+            defaultIcons = require('@json/json');
         }
         return defaultIcons.locate(prefix);
     }
