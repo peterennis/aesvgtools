@@ -1,5 +1,5 @@
 /**
- * This file is part of the @json/tools package.
+ * This file is part of the @iconify/tools package.
  *
  * (c) Vjacheslav Trushkin <cyberalien@gmail.com>
  *
@@ -41,14 +41,7 @@ let Modules = {
     ConvertShapes: require('./shapes/convert'),
 
     // Misc
-    Scale: require('./optimize/scale'),
-
-    // Iconify.design specific modules
-    Scriptify: require('./json/scriptify'),
-    SSVGOptimize: require('./json/optimize'),
-    SSVGDeOptimize: require('./json/deoptimize'),
-    SSVGPrefix: require('./json/prefix'),
-    SSVGBundle: require('./json/bundle')
+    Scale: require('./optimize/scale')
 };
 
 module.exports = Modules;
