@@ -37,7 +37,7 @@ keys = Object.keys(data);
 if (debug) {
     console.log('Parsing ' + keys.length + ' items...');
 }
-results = {};
+results = Object.create(null);
 
 next();
 
@@ -182,7 +182,10 @@ function next() {
         return '<svg ' +
             'width="' + size.width + '" height="' + size.height + '" ' +
             'viewBox="' + size.left + ' ' + size.top + ' ' + size.width + ' ' + size.height + '" ' +
-            'xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">' + item.body + '</svg>';
+            'xmlns="http://www.w3.org/2000/svg" ' +
+            'xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+            'preserveAspectRatio="xMidYMid meet"' +
+            '>' + item.body + '</svg>';
     }
 
     /**
@@ -360,8 +363,8 @@ function next() {
         image.onload = function() {
             var canvas = drawImage(image, size, scale),
                 redraw = false,
-                sideLimits = {},
-                limitMultipliers = {};
+                sideLimits = Object.create(null),
+                limitMultipliers = Object.create(null);
 
             // Check all sides for filled pixels
             if (!testVerticalLine(canvas, 0, 0, size.width / scale)) {

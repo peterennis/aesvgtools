@@ -31,7 +31,7 @@ const defaults = {
     fontChanges: false,
 
     // List of changes for each character: [hex] = {height: 1000}
-    characterChanges: {},
+    characterChanges: Object.create(null),
 
     // Crop glyphs
     crop: false,
@@ -45,14 +45,13 @@ const defaults = {
  * @returns {string}
  */
 function generateSVG(character, path) {
-    let svg = '<svg';
-    svg += ' width="' + character.width + '"';
-    svg += ' height="' + character.height + '"';
-    svg += ' viewBox="0 0 ' + character.width + ' ' + character.height + '"';
-    svg += ' xmlns="http://www.w3.org/2000/svg">\n';
-    svg += getSVGBody(character, path);
-    svg += '</svg>';
-    return svg;
+    return '<svg ' +
+        'width="' + character.width + '" ' +
+        'height="' + character.height + '" ' +
+        'viewBox="0 0 ' + character.width + ' ' + character.height + '" ' +
+        'xmlns="http://www.w3.org/2000/svg" ' +
+        'xmlns:xlink="http://www.w3.org/1999/xlink"' +
+    '>\n' + getSVGBody(character, path) + '</svg>';
 }
 
 /**
@@ -103,7 +102,7 @@ function applyOptions(data, options) {
  * @return {Promise}
  */
 module.exports = (source, options) => {
-    options = options === void 0 ? {} : options;
+    options = options === void 0 ? Object.create(null) : options;
     Object.keys(defaults).forEach(key => {
         if (options[key] === void 0) {
             options[key] = defaults[key];
@@ -139,7 +138,7 @@ module.exports = (source, options) => {
             }
 
             // Crop queue
-            let cropQueue = {};
+            let cropQueue = Object.create(null);
 
             // Find fonts
             let glyphs = new Collection(options.prefix);
@@ -310,7 +309,7 @@ module.exports = (source, options) => {
                 let cropOptions = Object.assign({
                     defaultRightLimit: false,
                     defaultLeftLimit: false
-                }, typeof options.crop === 'object' ? options.crop : {});
+                }, typeof options.crop === 'object' ? options.crop : Object.create(null));
 
                 cropOptions.multiple = true;
                 cropOptions.format = 'svg';

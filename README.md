@@ -1,4 +1,4 @@
-# Iconify.design Tools
+# Iconify Tools
 
 This library is a collection of tools for importing, exporting and processing SVG images. 
 
@@ -301,6 +301,28 @@ tools.ExportJSON(collection, 'filename.json').then(json => {
 });
 ```
 
+### Exporting image to PNG
+
+You can also export images to PNG.
+
+Important: this function requires PhantomJS to be installed and accessible from command line!
+
+```
+tools.ExportPNG(svg, 'filename.png', {
+    // options object here
+}).then(() => {
+    console.log('Exported filename.png');
+}).catch(err => {
+    console.error(err);
+});
+```
+
+Options object has following properties:
+* width, height: dimensions of PNG image. Default = same as SVG dimensions.
+* color: color for monotone images that use currentColor (see ChangePalette function). Default = '#000'
+* background: background color, default = 'transparent'
+
+
 ## Manipulating
 
 Most functions require SVG to be optimized. Therefore before doing anything else, you should optimize icon.
@@ -488,7 +510,7 @@ tools.ChangePalette(svg, {
 });
 ```
 
-Primary use of this tool in Iconify.design is to replace all colors in monotone with "currentColor" keyword and add it to shapes that are missing color values:
+Primary use of this tool in Iconify is to replace all colors in monotone with "currentColor" keyword and add it to shapes that are missing color values:
 
 ```
 collection.promiseAll(svg => tools.ChangePalette(svg, {
@@ -551,4 +573,4 @@ If you need any other tool to help with custom SVG icon sets development, sugges
 
 Library is released with MIT license.
 
-© 2016 - 2018 Vjacheslav Trushkin
+© 2016 - 2019 Vjacheslav Trushkin

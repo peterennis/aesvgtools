@@ -34,7 +34,7 @@ const complexSelectorTest = /[\+~\[\]\*>]|\S+[\.#]\S+/;
  */
 module.exports = (svg, options) => {
     // Set options
-    options = options === void 0 ? {} : options;
+    options = options === void 0 ? Object.create(null) : options;
     Object.keys(defaults).forEach(key => {
         if (options[key] === void 0) {
             options[key] = defaults[key];
@@ -45,9 +45,9 @@ module.exports = (svg, options) => {
     return new Promise((fulfill, reject) => {
         let $root = svg.$svg(':root'),
             rootAttributes = $root.get(0).attribs,
-            styles = {},
-            usedSelectors = {},
-            keepSelectors = {},
+            styles = Object.create(null),
+            usedSelectors = Object.create(null),
+            keepSelectors = Object.create(null),
             complexSelectors = false,
             styleTags = [],
             xlink = false;
@@ -204,7 +204,7 @@ module.exports = (svg, options) => {
                                 }
 
                                 if (styles[selector] === void 0) {
-                                    styles[selector] = {};
+                                    styles[selector] = Object.create(null);
                                 }
                                 styles[selector][key] = token;
                             });
@@ -281,10 +281,11 @@ module.exports = (svg, options) => {
 
                 // Check other attributes
                 Object.keys(nodeAttributes).forEach(attr => {
-                    let value = nodeAttributes[attr];
+                    let value = nodeAttributes[attr],
+                        attrib = attr.toLowerCase();
 
                     //noinspection FallThroughInSwitchStatementJS
-                    switch (attr) {
+                    switch (attrib) {
                         case 'stop-color':
                             if (!extra.gradient) {
                                 throw new Error('Unexpected attribute "' + attr + '" outside of gradient');
@@ -296,7 +297,12 @@ module.exports = (svg, options) => {
                             break;
 
                         default:
-                            let list = attr.split('-');
+                            if (attrib.slice(0, 2) === 'on') {
+                                // Possible JavaScript?
+                                throw new Error('Unexpected attribute "' + attr + '"');
+                            }
+
+                            let list = attrib.split('-');
                             switch (list[0]) {
                                 // Clean up BPMN junk
                                 case 'font':
@@ -385,7 +391,7 @@ module.exports = (svg, options) => {
 
                     case 'linearGradient':
                     case 'radialGradient':
-                        checkShape($child, child, Object.assign({}, extra, {gradient: true}));
+                        checkShape($child, child, Object.assign(Object.create(null), extra, {gradient: true}));
                         return;
 
                     case 'stop':
@@ -423,7 +429,7 @@ module.exports = (svg, options) => {
         }
 
         // Check root attributes
-        let groupAttributes = {};
+        let groupAttributes = Object.create(null);
 
         Object.keys(rootAttributes).forEach(attr => {
             if (attr.toLowerCase().slice(0, 6) === 'stroke' || attr.toLowerCase().slice(0, 4) === 'fill') {
@@ -452,7 +458,7 @@ module.exports = (svg, options) => {
 
         // Do stuff
         try {
-            checkChildElements($root, {});
+            checkChildElements($root, Object.create(null));
         } catch (err) {
             reject(err);
             return;

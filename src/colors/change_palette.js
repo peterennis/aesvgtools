@@ -47,7 +47,7 @@ module.exports = (svg, palette) => {
          */
         function parseStyle(style) {
             if (typeof style !== 'string') {
-                return;
+                return '';
             }
 
             let tokens = (new Tokenizer({
@@ -68,14 +68,29 @@ module.exports = (svg, palette) => {
                             if (typeof palette === 'string') {
                                 token.value = palette;
                             } else {
-                                let colorKey = token.value;
+                                let colorKey = token.value,
+                                    callbackColor = null;
+
                                 if (palette[colorKey] === void 0) {
                                     colorKey = color.toString({compress: true});
                                     if (palette[colorKey] === void 0) {
-                                        return;
+                                        // Make sure actual color is used in callback
+                                        callbackColor = colorKey;
+                                        colorKey = 'default';
+                                        if (palette[colorKey] === void 0) {
+                                            return;
+                                        }
                                     }
                                 }
-                                token.value = palette[colorKey];
+
+                                let newColor = palette[colorKey];
+                                if (typeof newColor === 'function') {
+                                    // Get color from callback('css', color, token, key)
+                                    newColor = newColor('css', callbackColor === null ? colorKey : callbackColor, token, key);
+                                }
+                                if (typeof newColor === 'string') {
+                                    token.value = palette[colorKey];
+                                }
                             }
                             break;
                     }
@@ -123,19 +138,23 @@ module.exports = (svg, palette) => {
                             let props = child.attribs;
 
                             // Mix values with parent values
-                            attributes = Object.assign({}, params);
+                            attributes = Object.assign(Object.create(null), params);
 
                             // Check for fill and stroke
                             ['fill', 'stroke'].forEach(attr => {
                                 if (props[attr] !== void 0) {
+
+                                    // Node has fill or stroke - check value
                                     if (isNone(props[attr])) {
+                                        // Color is set to "none" - ignore node
                                         attributes[attr] = false;
                                         return;
                                     }
 
                                     // Change color
                                     if (typeof palette !== 'string') {
-                                        let colorKey = props[attr];
+                                        let colorKey = props[attr],
+                                            callbackColor = null;
                                         if (palette[colorKey] === void 0) {
                                             let color = Color.fromString(props[attr]);
                                             if (color !== null) {
@@ -143,20 +162,36 @@ module.exports = (svg, palette) => {
                                             }
                                         }
                                         if (palette[colorKey] === void 0 && palette.default !== void 0) {
+                                            // Send actual color instead of 'default' to callback
+                                            callbackColor = colorKey;
                                             colorKey = 'default';
                                         }
                                         if (palette[colorKey] !== void 0) {
-                                            $child.attr(attr, palette[colorKey]);
+                                            let newColor = palette[colorKey];
+                                            // Call callback('node', color, $node, attr) to get new color
+                                            if (typeof newColor === 'function') {
+                                                newColor = newColor('node', callbackColor === null ? colorKey : callbackColor, $child, attr);
+                                            }
+                                            if (typeof newColor === 'string') {
+                                                $child.attr(attr, newColor);
+                                            }
                                         }
                                     }
 
-                                    attributes[attr] = props[attr];
-                                } else if (
-                                    addColor !== false && shape &&
-                                    attributes[attr] === true // do not add if value is 'none' or parent color is set
-                                ) {
-                                    $child.attr(attr, addColor);
-                                    attributes[attr] = addColor;
+                                    if (props[attr] !== void 0) {
+                                        attributes[attr] = props[attr];
+                                    }
+
+                                } else if (shape && attributes[attr] === true) {
+
+                                    // Shape that supposed to have color, but it is not set. Set default value
+
+                                    // Get color value from callback('add', $node)
+                                    let color = typeof addColor === 'function' ? addColor('add', $child) : addColor;
+                                    if (typeof color === 'string') {
+                                        $child.attr(attr, color);
+                                        attributes[attr] = color;
+                                    }
                                 }
                             });
                         }

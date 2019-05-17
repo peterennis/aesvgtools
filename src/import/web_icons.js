@@ -60,7 +60,7 @@ function load(source, options) {
  * Import icons from web icon svg
  */
 module.exports = (source, options) => {
-    options = options === void 0 ? {} : options;
+    options = options === void 0 ? Object.create(null) : options;
     Object.keys(defaults).forEach(key => {
         if (options[key] === void 0) {
             options[key] = defaults[key];
@@ -121,7 +121,7 @@ module.exports = (source, options) => {
                     return;
                 }
                 // Generate SVG
-                let svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '" viewBox="' + left + ' ' + top + ' ' + width + ' ' + height + '">' + $symbol.html() + '</svg>';
+                let svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + width + '" height="' + height + '" viewBox="' + left + ' ' + top + ' ' + width + ' ' + height + '">' + $symbol.html() + '</svg>';
 
                 // Get keyword
                 let keyword = options.keywordCallback(id, options);

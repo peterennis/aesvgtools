@@ -22,11 +22,13 @@ let Modules = {
     // Colors
     GetPalette: require('./colors/get_palette'),
     ChangePalette: require('./colors/change_palette'),
+    Opacify: require('./colors/opacify'),
 
     // Export
     ExportSVG: require('./export/svg'),
     ExportDir: require('./export/dir'),
     ExportJSON: require('./export/json'),
+    ExportPNG: require('./export/png'),
 
     // Import
     ImportSVG: require('./import/svg'),
